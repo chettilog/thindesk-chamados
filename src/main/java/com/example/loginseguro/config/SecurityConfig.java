@@ -2,11 +2,14 @@ package com.example.loginseguro.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 /**
  * Configuração central de segurança:
@@ -39,6 +42,11 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // ADMIN e GESTOR
                         .requestMatchers("/gestor/**").hasAnyRole("ADMIN", "GESTOR")
+                        // API de chamados: só técnico/admin resolve
+                        .requestMatchers(HttpMethod.PUT, "/api/chamados/*/resolver")
+                        .hasAnyRole("TECNICO", "ADMIN")
+                        // Demais rotas da API: qualquer usuário logado
+                        .requestMatchers("/api/chamados/**").authenticated()
                         // Qualquer outra rota exige estar logado (qualquer perfil)
                         .anyRequest().authenticated()
                 )
@@ -63,9 +71,17 @@ public class SecurityConfig {
                 )
 
                 // ===== Acesso negado (logado, mas sem o perfil necessário) =====
-                .exceptionHandling(ex -> ex.accessDeniedPage("/acesso-negado"));
+                .exceptionHandling(ex -> ex
+                        // Na API: sem login devolve 401 em vez de redirecionar para /login
+                        .defaultAuthenticationEntryPointFor(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                request -> request.getRequestURI().startsWith("/api/"))
+                        .accessDeniedPage("/acesso-negado")
+                )
 
-        // A proteção CSRF fica ativada por padrão (proteção contra formulários falsos)
+                // CSRF continua ativo para as páginas; desligado só para a API REST
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
+
         return http.build();
     }
 }

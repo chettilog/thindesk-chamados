@@ -7,5 +7,6 @@ package com.example.loginseguro.model;
 public enum Role {
     ADMIN,   // acesso total: gerencia usuários
     GESTOR,  // acesso intermediário
+    TECNICO, // resolve os chamados técnicos
     USUARIO  // acesso básico: perfil padrão ao se cadastrar
 }
