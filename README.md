@@ -8,7 +8,7 @@ Tecnologias: Java 21, Spring Boot 4, Spring Security, Thymeleaf e MongoDB Atlas.
 
 ## Acesso online
 
-**Link da aplicação:** https://SEU-LINK.onrender.com
+**Link da aplicação:** https://thindesk-chamados-8dki.onrender.com
 
 Credencial de exemplo (perfil TECNICO, consegue ver o dashboard completo, atender e resolver chamados):
 
