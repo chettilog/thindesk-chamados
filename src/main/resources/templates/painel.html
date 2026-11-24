@@ -16,7 +16,8 @@
 
         <h2>Áreas disponíveis para você</h2>
         <ul>
-            <li>Painel (todos os perfis)</li>
+            <li><a th:href="@{/dashboard}">Dashboard</a> (todos os perfis)</li>
+            <li><a th:href="@{/chamados}">Chamados</a> (todos os perfis)</li>
             <!-- sec:authorize mostra o item só para quem tem o perfil -->
             <li sec:authorize="hasAnyRole('ADMIN','GESTOR')">
                 <a th:href="@{/gestor}">Área de gestão</a> (GESTOR e ADMIN)

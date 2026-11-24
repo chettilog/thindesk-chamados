@@ -20,6 +20,7 @@ public class Chamado {
 
     private LocalDateTime dataAbertura;
     private StatusChamado status;
+    private Prioridade prioridade;
 
     private String solucao;
     private LocalDateTime dataResolucao;
@@ -36,6 +37,8 @@ public class Chamado {
     public void setDataAbertura(LocalDateTime dataAbertura) { this.dataAbertura = dataAbertura; }
     public StatusChamado getStatus() { return status; }
     public void setStatus(StatusChamado status) { this.status = status; }
+    public Prioridade getPrioridade() { return prioridade; }
+    public void setPrioridade(Prioridade prioridade) { this.prioridade = prioridade; }
     public String getSolucao() { return solucao; }
     public void setSolucao(String solucao) { this.solucao = solucao; }
     public LocalDateTime getDataResolucao() { return dataResolucao; }

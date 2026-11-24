@@ -7,10 +7,10 @@
 
 <main class="container">
     <div class="card">
-        <h1>Bem-vindo ao Login Seguro</h1>
+        <h1>Bem-vindo ao Thindesk Chamados</h1>
         <p class="texto-suave">
-            Sistema de autenticação e autorização com Spring Boot, Spring Security,
-            Thymeleaf e MongoDB Atlas.
+            Sistema de controle de chamados técnicos: abra um chamado, acompanhe o atendimento
+            e veja os indicadores no dashboard.
         </p>
 
         <!-- Visitante -->
@@ -21,7 +21,7 @@
 
         <!-- Logado -->
         <div sec:authorize="isAuthenticated()">
-            <a th:href="@{/painel}" class="btn">Ir para o painel</a>
+            <a th:href="@{/dashboard}" class="btn">Ir para o dashboard</a>
         </div>
     </div>
 </main>

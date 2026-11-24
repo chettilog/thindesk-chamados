@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Abrir chamado')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container">
+    <div class="card card-medio">
+        <h1>Abrir chamado</h1>
+
+        <form th:action="@{/chamados}" th:object="${form}" method="post" novalidate>
+            <div class="campo">
+                <label for="titulo">Título</label>
+                <input type="text" th:field="*{titulo}" placeholder="Ex.: Impressora do 2º andar não imprime">
+                <div class="erro-campo" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></div>
+            </div>
+
+            <div class="campo">
+                <label for="descricao">Descrição do problema</label>
+                <textarea th:field="*{descricao}" rows="6"
+                          placeholder="Explique o que aconteceu, onde e desde quando"></textarea>
+                <div class="erro-campo" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
+            </div>
+
+            <div class="campo">
+                <label for="prioridade">Prioridade</label>
+                <select th:field="*{prioridade}">
+                    <option th:each="p : ${prioridades}" th:value="${p}" th:text="${p.rotulo}"></option>
+                </select>
+                <div class="erro-campo" th:if="${#fields.hasErrors('prioridade')}" th:errors="*{prioridade}"></div>
+            </div>
+
+            <button type="submit" class="btn">Abrir chamado</button>
+            <a th:href="@{/chamados}" class="link-cancelar">Cancelar</a>
+        </form>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

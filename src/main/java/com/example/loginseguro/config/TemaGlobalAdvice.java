@@ -15,8 +15,17 @@ public class TemaGlobalAdvice {
     @Value("${app.tema:padrao}")
     private String tema;
 
+    @Value("${app.versao:1.0.0}")
+    private String versao;
+
     @ModelAttribute("tema")
     public String tema() {
         return tema;
+    }
+
+    // Versão exibida no rodapé (definida em app.versao no application.properties)
+    @ModelAttribute("versao")
+    public String versao() {
+        return versao;
     }
 }

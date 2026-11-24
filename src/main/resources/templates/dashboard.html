@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container container-largo" th:object="${resumo}">
+
+    <div class="topo-pagina">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="texto-suave" th:text="${veTodos} ? 'Visão geral de todos os chamados do sistema' : 'Visão geral dos seus chamados'"></p>
+        </div>
+        <a th:href="@{/chamados/novo}" class="btn">+ Abrir chamado</a>
+    </div>
+
+    <!-- ===== Indicadores principais ===== -->
+    <section class="indicadores">
+        <a class="indicador" th:href="@{/chamados}">
+            <span class="indicador-rotulo">Total de chamados</span>
+            <strong class="indicador-valor" th:text="*{total}">0</strong>
+        </a>
+        <a class="indicador borda-ABERTO" th:href="@{/chamados(status='ABERTO')}">
+            <span class="indicador-rotulo">Abertos</span>
+            <strong class="indicador-valor" th:text="*{abertos}">0</strong>
+        </a>
+        <a class="indicador borda-EM_ANDAMENTO" th:href="@{/chamados(status='EM_ANDAMENTO')}">
+            <span class="indicador-rotulo">Em andamento</span>
+            <strong class="indicador-valor" th:text="*{emAndamento}">0</strong>
+        </a>
+        <a class="indicador borda-RESOLVIDO" th:href="@{/chamados(status='RESOLVIDO')}">
+            <span class="indicador-rotulo">Resolvidos</span>
+            <strong class="indicador-valor" th:text="*{resolvidos}">0</strong>
+        </a>
+    </section>
+
+    <section class="indicadores">
+        <div class="indicador">
+            <span class="indicador-rotulo">Taxa de resolução</span>
+            <strong class="indicador-valor" th:text="*{taxaResolucao} + '%'">0%</strong>
+        </div>
+        <div class="indicador">
+            <span class="indicador-rotulo">Tempo médio de resolução</span>
+            <strong class="indicador-valor" th:text="*{tempoMedioResolucao}">—</strong>
+        </div>
+        <div class="indicador borda-prio-ALTA">
+            <span class="indicador-rotulo">Alta prioridade pendentes</span>
+            <strong class="indicador-valor" th:text="*{altaPendentes}">0</strong>
+        </div>
+    </section>
+
+    <!-- ===== Gráficos ===== -->
+    <section class="grade-2">
+        <div class="card">
+            <h2>Chamados por status</h2>
+            <div class="barra-linha" th:each="b : *{porStatus}">
+                <span class="barra-rotulo" th:text="${b.rotulo}"></span>
+                <div class="barra-trilho">
+                    <div class="barra-preenchida" th:classappend="${b.classe}"
+                         th:style="'width:' + ${b.percentual} + '%'"></div>
+                </div>
+                <span class="barra-valor" th:text="${b.valor}"></span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Chamados por prioridade</h2>
+            <div class="barra-linha" th:each="b : *{porPrioridade}">
+                <span class="barra-rotulo" th:text="${b.rotulo}"></span>
+                <div class="barra-trilho">
+                    <div class="barra-preenchida" th:classappend="${b.classe}"
+                         th:style="'width:' + ${b.percentual} + '%'"></div>
+                </div>
+                <span class="barra-valor" th:text="${b.valor}"></span>
+            </div>
+        </div>
+    </section>
+
+    <section class="grade-2">
+        <div class="card">
+            <h2>Abertos nos últimos 7 dias</h2>
+            <div class="colunas">
+                <div class="coluna" th:each="b : *{ultimosDias}">
+                    <div class="coluna-area">
+                        <div class="coluna-barra" th:style="'height:' + ${b.percentual} + '%'"></div>
+                    </div>
+                    <span class="coluna-valor" th:text="${b.valor}"></span>
+                    <span class="coluna-rotulo" th:text="${b.rotulo}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Resolvidos por técnico</h2>
+            <p th:if="${#lists.isEmpty(resumo.porTecnico)}" class="texto-suave">Nenhum chamado resolvido ainda.</p>
+            <div class="barra-linha" th:each="b : *{porTecnico}">
+                <span class="barra-rotulo" th:text="${b.rotulo}"></span>
+                <div class="barra-trilho">
+                    <div class="barra-preenchida" th:style="'width:' + ${b.percentual} + '%'"></div>
+                </div>
+                <span class="barra-valor" th:text="${b.valor}"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Chamados recentes ===== -->
+    <section class="card">
+        <div class="topo-pagina">
+            <h2>Chamados recentes</h2>
+            <a th:href="@{/chamados}">Ver todos &rarr;</a>
+        </div>
+        <p th:if="${#lists.isEmpty(resumo.recentes)}" class="texto-suave">
+            Nenhum chamado ainda. <a th:href="@{/chamados/novo}">Abra o primeiro.</a>
+        </p>
+        <table th:unless="${#lists.isEmpty(resumo.recentes)}">
+            <thead>
+            <tr>
+                <th>Título</th>
+                <th th:if="${veTodos}">Solicitante</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th>Aberto em</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : *{recentes}">
+                <td><a th:href="@{/chamados/{id}(id=${c.id})}" th:text="${c.titulo}"></a></td>
+                <td th:if="${veTodos}" th:text="${nomes.get(c.solicitanteId) ?: '—'}"></td>
+                <td><span class="badge" th:classappend="${'prio-' + c.prioridade}"
+                          th:text="${c.prioridade != null ? c.prioridade.rotulo : 'Média'}"></span></td>
+                <td><span class="badge" th:classappend="${'status-' + c.status}" th:text="${c.status.rotulo}"></span></td>
+                <td th:text="${#temporals.format(c.dataAbertura, 'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Chamados')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container">
+    <div class="card">
+        <div class="topo-pagina">
+            <h1 th:text="${veTodos} ? 'Todos os chamados' : 'Meus chamados'">Chamados</h1>
+            <a th:href="@{/chamados/novo}" class="btn">+ Abrir chamado</a>
+        </div>
+
+        <!-- Filtro por status (GET, não precisa de CSRF) -->
+        <form th:action="@{/chamados}" method="get" class="inline filtro">
+            <label for="status">Status:</label>
+            <select id="status" name="status" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                <option th:each="s : ${todosStatus}" th:value="${s}" th:text="${s.rotulo}"
+                        th:selected="${s == statusFiltro}"></option>
+            </select>
+        </form>
+
+        <p th:if="${#lists.isEmpty(chamados)}" class="texto-suave">Nenhum chamado encontrado.</p>
+
+        <table th:unless="${#lists.isEmpty(chamados)}">
+            <thead>
+            <tr>
+                <th>Título</th>
+                <th th:if="${veTodos}">Solicitante</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th>Aberto em</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${chamados}">
+                <td><a th:href="@{/chamados/{id}(id=${c.id})}" th:text="${c.titulo}"></a></td>
+                <td th:if="${veTodos}" th:text="${nomes.get(c.solicitanteId) ?: '—'}"></td>
+                <td><span class="badge" th:classappend="${'prio-' + c.prioridade}"
+                          th:text="${c.prioridade != null ? c.prioridade.rotulo : 'Média'}"></span></td>
+                <td><span class="badge" th:classappend="${'status-' + c.status}" th:text="${c.status.rotulo}"></span></td>
+                <td th:text="${#temporals.format(c.dataAbertura, 'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

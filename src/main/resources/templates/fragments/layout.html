@@ -11,7 +11,7 @@
 <head th:fragment="head(titulo)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${titulo} + ' | Login Seguro'">Login Seguro</title>
+    <title th:text="${titulo} + ' | Thindesk Chamados'">Thindesk Chamados</title>
     <link rel="stylesheet" th:href="@{/themes/{t}/style.css(t=${tema})}">
 </head>
 
@@ -19,7 +19,7 @@
 
 <!-- ===== Cabeçalho com menu: os links mudam conforme o perfil ===== -->
 <header th:fragment="navbar" class="navbar">
-    <a th:href="@{/}" class="logo">Login Seguro</a>
+    <a th:href="@{/}" class="logo">Thindesk Chamados</a>
     <nav>
         <!-- Visitante (não logado) -->
         <th:block sec:authorize="isAnonymous()">
@@ -29,7 +29,10 @@
 
         <!-- Usuário logado -->
         <th:block sec:authorize="isAuthenticated()">
-            <a th:href="@{/painel}">Painel</a>
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/chamados}">Chamados</a>
+            <a th:href="@{/chamados/novo}">Abrir chamado</a>
+            <a th:href="@{/painel}">Meu perfil</a>
             <a sec:authorize="hasAnyRole('ADMIN','GESTOR')" th:href="@{/gestor}">Gestão</a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/usuarios}">Usuários</a>
             <!-- Logout precisa ser POST (com token CSRF, incluído automaticamente) -->
@@ -42,7 +45,7 @@
 
 <!-- ===== Rodapé ===== -->
 <footer th:fragment="footer" class="footer">
-    Login Seguro &middot; Spring Boot + Thymeleaf + MongoDB Atlas
+    Thindesk Chamados <span th:text="'v' + ${versao}">v1.0.0</span> &middot; Spring Boot + Thymeleaf + MongoDB Atlas
 </footer>
 
 </body>

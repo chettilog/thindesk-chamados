@@ -45,6 +45,9 @@ public class SecurityConfig {
                         // API de chamados: só técnico/admin resolve
                         .requestMatchers(HttpMethod.PUT, "/api/chamados/*/resolver")
                         .hasAnyRole("TECNICO", "ADMIN")
+                        // Telas: só técnico/admin assume ou resolve chamado
+                        .requestMatchers(HttpMethod.POST, "/chamados/*/atender", "/chamados/*/resolver")
+                        .hasAnyRole("TECNICO", "ADMIN")
                         // Demais rotas da API: qualquer usuário logado
                         .requestMatchers("/api/chamados/**").authenticated()
                         // Qualquer outra rota exige estar logado (qualquer perfil)
@@ -56,7 +59,7 @@ public class SecurityConfig {
                         .loginPage("/login")               // nossa página de login
                         .usernameParameter("email")        // nome do campo de e-mail no formulário
                         .passwordParameter("senha")        // nome do campo de senha no formulário
-                        .defaultSuccessUrl("/painel", true) // para onde vai após logar
+                        .defaultSuccessUrl("/dashboard", true) // para onde vai após logar
                         .failureUrl("/login?erro")          // se errar a senha
                         .permitAll()
                 )

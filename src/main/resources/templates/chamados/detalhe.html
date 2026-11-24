@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Chamado')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<main class="container">
+    <div class="card" th:object="${chamado}">
+        <p><a th:href="@{/chamados}">&larr; Voltar para a lista</a></p>
+
+        <div th:if="${sucesso}" class="alerta alerta-sucesso" th:text="${sucesso}"></div>
+        <div th:if="${erro}" class="alerta alerta-erro" th:text="${erro}"></div>
+
+        <h1 th:text="*{titulo}">Título</h1>
+        <p>
+            <span class="badge" th:classappend="${'status-' + chamado.status}" th:text="*{status.rotulo}"></span>
+            <span class="badge" th:classappend="${'prio-' + chamado.prioridade}"
+                  th:text="${'Prioridade ' + (chamado.prioridade != null ? chamado.prioridade.rotulo : 'Média')}"></span>
+        </p>
+
+        <dl class="detalhes">
+            <dt>Solicitante</dt>
+            <dd th:text="${nomes.get(chamado.solicitanteId) ?: '—'}"></dd>
+            <dt>Aberto em</dt>
+            <dd th:text="${#temporals.format(chamado.dataAbertura, 'dd/MM/yyyy HH:mm')}"></dd>
+            <dt>Técnico</dt>
+            <dd th:text="${chamado.tecnicoId != null ? nomes.get(chamado.tecnicoId) : 'Ainda não atribuído'}"></dd>
+            <th:block th:if="*{dataResolucao != null}">
+                <dt>Resolvido em</dt>
+                <dd th:text="${#temporals.format(chamado.dataResolucao, 'dd/MM/yyyy HH:mm')}"></dd>
+            </th:block>
+        </dl>
+
+        <h2>Descrição</h2>
+        <p class="texto-longo" th:text="*{descricao}"></p>
+
+        <th:block th:if="*{solucao != null}">
+            <h2>Solução</h2>
+            <p class="texto-longo" th:text="*{solucao}"></p>
+        </th:block>
+
+        <!-- Ações do técnico/admin (o backend também confere o perfil) -->
+        <th:block th:if="${podeAtender and chamado.status.name() != 'RESOLVIDO'}">
+            <hr>
+            <form th:if="${chamado.status.name() == 'ABERTO'}"
+                  th:action="@{/chamados/{id}/atender(id=${chamado.id})}" method="post">
+                <button type="submit" class="btn btn-secundario">Assumir atendimento</button>
+            </form>
+
+            <form th:action="@{/chamados/{id}/resolver(id=${chamado.id})}" method="post">
+                <div class="campo">
+                    <label for="solucao">Solução aplicada</label>
+                    <textarea id="solucao" name="solucao" rows="4"
+                              placeholder="Descreva o que foi feito para resolver"></textarea>
+                </div>
+                <button type="submit" class="btn">Resolver chamado</button>
+            </form>
+        </th:block>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.example.loginseguro.dto;
 
+import com.example.loginseguro.model.Prioridade;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -10,5 +11,8 @@ public record ChamadoRequest(
 
         @NotBlank(message = "A descrição é obrigatória")
         @Size(max = 2000, message = "A descrição pode ter no máximo 2000 caracteres")
-        String descricao
+        String descricao,
+
+        // Opcional: se não vier, o chamado é aberto com prioridade MEDIA
+        Prioridade prioridade
 ) {}
